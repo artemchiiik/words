@@ -1,22 +1,100 @@
 package com.epam.rd.autotasks.words;
 
 import java.util.Arrays;
+import java.util.StringJoiner;
+import java.util.regex.Pattern;
 
 public class StringUtil {
     public static int countEqualIgnoreCaseAndSpaces(String[] words, String sample) {
-        throw new UnsupportedOperationException();
+        int count = 0;
+        if ((words != null) && (sample != null)){
+            for (String word : words) {
+                if (word.strip().equalsIgnoreCase(sample.strip())) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
     public static String[] splitWords(String text) {
-        throw new UnsupportedOperationException();
+        String reg = "[,!?:;.\\s]+";
+        if ((text == null) || (text.isEmpty()) || (Pattern.matches(reg, text))){
+            return null;
+        }
+        else {
+            String[] textTemp = text.split(reg);
+            if (textTemp[0].isEmpty()){
+                String[] textToReturn = new String[textTemp.length - 1];
+                for (int i = 0; i < textTemp.length - 1; i++){
+                    textToReturn[i] = textTemp[i + 1];
+                }
+                return textToReturn;
+            }
+            else {
+                return textTemp;
+            }
+        }
     }
 
     public static String convertPath(String path, boolean toWin) {
-        throw new UnsupportedOperationException();
+        if ((path == null) || path.isEmpty()){
+            return null;
+        }
+
+        String regUnOne = "^([~/\\.]|(~)|(\\.\\.)|dir){0,1}[\\w\\./\\s]+";
+        String regUnTwo = "~{1}";
+
+        String regWinOne = "(([A-Z]:)|(\\.)|dir)(\\\\[\\w\\s\\.]+)+(\\\\)?";
+        String regWinTwo = "([A-Z]:)\\\\([\\w\\s\\.])+";
+        String regWinThree = "((\\.)|(\\.\\.))(\\\\[\\w\\s\\.]+)+(\\\\)?";
+        String regWinFour = "([A-Z]:)\\\\";
+
+        if (Pattern.matches(regWinOne, path) || Pattern.matches(regWinTwo, path ) || Pattern.matches(regWinThree, path ) || Pattern.matches(regWinFour, path )){
+            if (toWin){
+                System.out.println("1" + path);
+                return path;
+            }
+            else {
+                System.out.println("2" + path.replace("C:\\User", "~").replace("C:", "/").replace("\\", "/"));
+                return path.replace("C:\\User", "~").replace("C:", "/").replace("\\", "/").replace("//", "/");
+            }
+        }
+        else {
+            if (Pattern.matches(regUnOne, path) || Pattern.matches(regUnTwo, path)) {
+                if (toWin) {
+                    if (path.startsWith("/")){
+                        return path.replaceFirst("/", "C:\\\\").replace("/", "\\");
+                    }
+                    System.out.println("3" + (path.replace("~", "C:\\User")).replace("/", "\\"));
+                    return (path.replace("~", "C:\\User")).replace("/", "\\");
+                } else {
+                    System.out.println("4" + path);
+                    return path;
+                }
+            }
+            else {
+                System.out.println("5" + path);
+                return null;}
+        }
     }
 
     public static String joinWords(String[] words) {
-        throw new UnsupportedOperationException();
+        StringJoiner stringJoiner = new StringJoiner(", ", "[", "]");
+        if ((words == null) || words.length == 0){
+            return null;
+        }
+        else {
+            for (int i = 0; i < words.length; i++){
+                if (!words[i].isEmpty()){
+                    stringJoiner.add(words[i]);
+                }
+            }
+            if (stringJoiner.toString().equals("[]")){
+                return null;
+            }
+        }
+        return stringJoiner.toString();
     }
 
     public static void main(String[] args) {
